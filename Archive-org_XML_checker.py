@@ -18,12 +18,6 @@ if __name__ == "__main__":
   failed = []
   for f in confirmed:
     (CRC32, MD5, SHA1) = checksumFile(f, -1, True, True, True)
-    if CRC32 == f['crc32']:
-      c = True
-    if MD5 == f['md5']:
-      m = True
-    if SHA1 == f['sha1']:
-      s = True
 
     if (CRC32 == f['crc32']) and (MD5 == f['md5']) and (SHA1 == f['sha1'])
       print("PASSED: %s" % f['name'])
