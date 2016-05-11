@@ -1,3 +1,4 @@
+import re
 import binascii
 import stat, os
 import getopt, sys
@@ -21,9 +22,7 @@ def crc32(f, bufSize):
 
 	return int(value)
 
-def md5(f, bufSize):
-	hashobj = hashlib.md5()
-
+def hashloop(hashobj, f, bufSize):
 	if not (bufSize):
 		hashobj.update(f.read())
 	else:
@@ -31,29 +30,36 @@ def md5(f, bufSize):
 			hashobj.update(data)
 
 	return hashobj.digest()
+
+def md5(f, bufSize):
+	hashobj = hashlib.md5()
+	return hashloop(hashobj, f, bufSize)
 
 def sha1(f, bufSize):
 	hashobj = hashlib.sha1()
+	return hashloop(hashobj, f, bufSize)
 
-	if not (bufSize):
-		hashobj.update(f.read())
-	else:
-		for data in iterfile(f, bufSize):
-			hashobj.update(data)
 
-	return hashobj.digest()
+def usage():
+	print("./%s -i input-files.xml" % (sys.argv[0]))
+	print("-b      => Sets buffer size to use on file (default is to load the whole file into memory)")
+	print("-r      => Uses regex string to filter the files being hashed")
+	print("--crc32 => Selects crc32 as the preferred hashing algorithm (Checksum, not a hash)")
+	print("--sha1  => Selects sha1  as the preferred hashing algorithm (Secure, until proven otherwise!)")
+	print("--md5   => Selects md5   as the preferred hashing algorithm (Proven otherwise ...)")
 
 if (__name__ == "__main__"):
 	try:
 		longopts = ["crc32", "md5", "sha1"]
-		opts, args = getopt.getopt(sys.argv[1:], "i:b:", longopts)
+		opts, args = getopt.getopt(sys.argv[1:], "i:b:r:h", longopts)
 	except getopt.GetoptError as error:
 		print(error)
-		# Put in some usage function when the code is done
+		usage()
 		sys.exit(1)
 
 	bufSize = 0
 	infile = None
+	pattern = None
 	hashFunc = sha1
 	hashName = "sha1"
 	for (opt, arg) in opts:
@@ -66,6 +72,11 @@ if (__name__ == "__main__"):
 		elif (opt == "--sha1"):
 			hashName = "sha1"
 			hashFunc = sha1
+		elif (opt == "-r"):
+			pattern = arg
+		elif (opt == "-h"):
+			usage()
+			sys.exit(1)
 		elif (opt == "-i"):
 			infile = arg
 		elif (opt == "-b"):
@@ -79,6 +90,8 @@ if (__name__ == "__main__"):
 
 	if (infile == None):
 		print("Input file must be specified")
+		print("")
+		usage()
 		sys.exit(1)
 	else:
 		archiveXMLtree = ET.parse(infile)
@@ -89,6 +102,9 @@ if (__name__ == "__main__"):
 			print(elem)
 			break
 		name = elem.get('name')
+		if (pattern != None):
+			if not (re.match(pattern, name)):
+				continue
 
 		try:
 			ret = elem.find('size')
@@ -119,3 +135,8 @@ if (__name__ == "__main__"):
 				print("BAD HASH: %s" % name)
 			else:
 				print("VERFIED: %s" % name)
+
+
+
+
+
