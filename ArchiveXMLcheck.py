@@ -118,7 +118,7 @@ if (__name__ == "__main__"):
 			continue
 
 		textbin = elem.find(hashName).text
-		hashbin = binascii.unhexlify(textbin)
+		hashbin = binascii.unhexlify(bytes(textbin, "utf-8"))
 
 		if (fsize != size):
 			print("Mismatched file size on: %s" % name)
