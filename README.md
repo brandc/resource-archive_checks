@@ -1,5 +1,5 @@
 ![Programming Language](https://img.shields.io/badge/Python-Programming%20Language-brightgreen)
-![Zero Clause BSD License](https://img.shields.io/badge/License-Zero%20Clause-green)
+![Zero Clause BSD License](https://img.shields.io/badge/License-BSD%20Zero%20Clause-green)
 
 # Resource Archive Checks
 Verifies the manifests against the files from archive.org given their respective XML file.
