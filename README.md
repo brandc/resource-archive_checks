@@ -12,8 +12,7 @@ python3 ArchiveXMLcheck.py --sha1 --crc32 --md5 -i input.xml
 
 You can also use --sha1, --crc32, and/or --md5 in any combination if you want to ensure file integrity with multiple checksums/hashes
 
-# Building
-## Requirements:
+# Requirements:
 - Python
 
 # License
